@@ -56,6 +56,7 @@ scene.add(transformControls);
 const deleteBtn = document.getElementById('deletePoint');
 const addBtn = document.getElementById('addPoint');
 const exportBtn = document.getElementById('exportBtn');
+const generatePlaneBtn = document.getElementById('generatePlane');
 const fileInput = document.getElementById('fileInput');
 
 function resizeRenderer() {
@@ -131,12 +132,16 @@ function parseData(text) {
     .map((coords) => new THREE.Vector3(...coords));
 }
 
-function loadData(text) {
-  const vectors = parseData(text);
+function populatePoints(vectors) {
   clearPoints();
   vectors.forEach((vector) => {
     createPoint(vector);
   });
+}
+
+function loadData(text) {
+  const vectors = parseData(text);
+  populatePoints(vectors);
 }
 
 function exportData() {
@@ -187,6 +192,20 @@ deleteBtn.addEventListener('click', () => {
 
 exportBtn.addEventListener('click', exportData);
 
+function generatePlanePoints(size = 16, spacing = 255 / (size - 1), planeZ = 0) {
+  const vectors = [];
+  for (let row = 0; row < size; row += 1) {
+    for (let col = 0; col < size; col += 1) {
+      vectors.push(new THREE.Vector3(col * spacing, row * spacing, planeZ));
+    }
+  }
+  return vectors;
+}
+
+generatePlaneBtn.addEventListener('click', () => {
+  populatePoints(generatePlanePoints());
+});
+
 fileInput.addEventListener('change', (event) => {
   const file = event.target.files?.[0];
   if (!file) return;
@@ -202,7 +221,4 @@ fileInput.addEventListener('change', (event) => {
 
 window.addEventListener('resize', resizeRenderer);
 
-const defaultTemplate = document.getElementById('defaultData');
-if (defaultTemplate?.textContent.trim()) {
-  loadData(defaultTemplate.textContent);
-}
+populatePoints(generatePlanePoints());
