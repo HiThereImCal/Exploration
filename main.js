@@ -1,7 +1,3 @@
-import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js';
-import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/controls/OrbitControls.js';
-import { TransformControls } from 'https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/controls/TransformControls.js';
-
 const canvas = document.getElementById('scene');
 const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
@@ -12,7 +8,7 @@ scene.background = new THREE.Color(0x0b1120);
 const camera = new THREE.PerspectiveCamera(55, 1, 0.1, 2000);
 camera.position.set(300, 300, 300);
 
-const controls = new OrbitControls(camera, renderer.domElement);
+const controls = new THREE.OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 controls.dampingFactor = 0.08;
 controls.target.set(128, 128, 128);
@@ -41,7 +37,7 @@ const pointGeometry = new THREE.SphereGeometry(2.5, 16, 16);
 const points = [];
 let selectedPoint = null;
 
-const transformControls = new TransformControls(camera, renderer.domElement);
+const transformControls = new THREE.TransformControls(camera, renderer.domElement);
 transformControls.setMode('translate');
 transformControls.addEventListener('dragging-changed', (event) => {
   controls.enabled = !event.value;
@@ -89,6 +85,7 @@ function clearPoints() {
 
 function createPoint(position) {
   const mesh = new THREE.Mesh(pointGeometry, pointMaterial.clone());
+  const normalMaterial = mesh.material;
   mesh.position.copy(position);
   mesh.castShadow = true;
   mesh.receiveShadow = true;
@@ -96,7 +93,7 @@ function createPoint(position) {
   const point = {
     mesh,
     position: mesh.position,
-    material: mesh.material,
+    normalMaterial,
   };
   points.push(point);
   return point;
@@ -105,11 +102,11 @@ function createPoint(position) {
 function selectPoint(point) {
   if (selectedPoint === point) return;
   if (selectedPoint) {
-    selectedPoint.mesh.material = pointMaterial.clone();
+    selectedPoint.mesh.material = selectedPoint.normalMaterial;
   }
-  selectedPoint = point;
+  selectedPoint = point || null;
   if (selectedPoint) {
-    selectedPoint.mesh.material = selectedMaterial.clone();
+    selectedPoint.mesh.material = selectedMaterial;
     transformControls.attach(selectedPoint.mesh);
   } else {
     transformControls.detach();
