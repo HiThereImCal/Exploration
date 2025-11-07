@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>3D Point Editor</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header>
+      <h1>3D Point Field Editor</h1>
+      <p>
+        Load a text file containing comma-separated <code>x,y,z</code> coordinates (one per line),
+        adjust point positions directly in the scene, and export the updated data.
+      </p>
+    </header>
+    <main>
+      <section class="controls">
+        <label class="file-input">
+          <span>Import data file</span>
+          <input id="fileInput" type="file" accept=".txt" />
+        </label>
+        <button id="addPoint">Add point at origin</button>
+        <button id="deletePoint" disabled>Delete selected point</button>
+        <button id="exportBtn">Export data</button>
+      </section>
+      <section class="canvas-wrapper">
+        <canvas id="scene"></canvas>
+        <aside class="instructions">
+          <h2>Tips</h2>
+          <ul>
+            <li>Click a point to select it.</li>
+            <li>Use the on-screen gizmo to drag points along an axis.</li>
+            <li>Use right mouse button to orbit and scroll wheel to zoom.</li>
+          </ul>
+        </aside>
+      </section>
+    </main>
+
+    <template id="defaultData">
+1,1,1
+30,45,90
+120,200,10
+200,40,220
+    </template>
+
+    <script type="module" src="main.js"></script>
+  </body>
+</html>
